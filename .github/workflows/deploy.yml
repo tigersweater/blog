@@ -1,0 +1,41 @@
+# main에 올리면(push) GitHub 서버에서 블로그를 빌드해 GitHub Pages에 게시한다
+name: 블로그 배포
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # GitHub 웹의 Actions 탭에서 수동으로 다시 배포할 때
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: 블로그 빌드
+        run: node build.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: 사이트
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -536,12 +536,14 @@ function loadPost(rel) {
   }
   if (!title) title = name; // 옵시디언처럼 파일 이름이 곧 제목
 
+  // 날짜 뒤에 시간(2026-11-02 14:30)을 적으면 같은 날 글끼리 순서를 정하는 데 쓴다 (화면에는 날짜만)
   let date = String(meta.date || meta.created || '').trim();
-  const dateMatch = date.match(/^(\d{4}-\d{2}-\d{2})/);
+  const dateMatch = date.match(/^(\d{4}-\d{2}-\d{2})(?:[ T](\d{1,2}):(\d{2}))?/);
   if (date && !dateMatch) {
-    warn(`${rel}: 날짜 "${date}" 형식이 맞지 않습니다 (예: 2026-11-02). 파일 이름이나 수정일로 대신합니다.`);
+    warn(`${rel}: 날짜 "${date}" 형식이 맞지 않습니다 (예: 2026-11-02 또는 2026-11-02 14:30). 파일 이름이나 수정일로 대신합니다.`);
   }
   date = dateMatch ? dateMatch[1] : '';
+  const time = dateMatch && dateMatch[2] ? `${pad(dateMatch[2])}:${dateMatch[3]}` : '';
   const stat = fs.statSync(full);
   if (!date) {
     const fromName = name.match(/^(\d{4}-\d{2}-\d{2})/);
@@ -562,7 +564,10 @@ function loadPost(rel) {
     title,
     aliases: toList(meta.aliases || meta.alias).map(String),
     date,
-    mtime: stat.mtimeMs, // 같은 날짜 글끼리는 나중에 쓴 글이 위로
+    sortKey: time ? `${date} ${time}` : date,
+    // 같은 날짜·시간 글끼리는 수정일이 최근인 글이 위로
+    // (GitHub 자동 배포에서는 모든 파일 수정일이 같아지므로 같은 날 글이 여럿이면 시간을 적을 것)
+    mtime: stat.mtimeMs,
     tags,
     metaSummary: meta.summary || '',
     body: text,
@@ -757,7 +762,7 @@ function main() {
   }
   ctx = null;
   const published = posts.filter((p) => !p.failed);
-  published.sort((a, b) => b.date.localeCompare(a.date) || b.mtime - a.mtime || a.title.localeCompare(b.title, 'ko'));
+  published.sort((a, b) => b.sortKey.localeCompare(a.sortKey) || b.mtime - a.mtime || a.title.localeCompare(b.title, 'ko'));
 
   // 사이트 폴더 안을 매번 비우고 새로 만든다 (직접 고친 내용은 사라짐)
   // 폴더 자체는 남긴다: 탐색기에서 열어 둔 폴더는 지울 수 없어서

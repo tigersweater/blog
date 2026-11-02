@@ -1,6 +1,6 @@
 ---
 title: 오늘 배운 HTML, CSS, JavaScript 정리
-date: 2026-11-02
+date: 2026-11-02 15:00
 tags: [HTML, CSS, JavaScript, 웹 기초]
 summary: 블로그를 직접 만들면서 알게 된 웹페이지의 세 가지 재료를 업무에 빗대어 정리했습니다.
 ---
