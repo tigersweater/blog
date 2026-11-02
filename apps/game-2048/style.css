@@ -1,0 +1,311 @@
+/* 2048 게임 스타일 — 블로그 색(spec.md 5-5)을 그대로 씀 */
+
+/* 기본 모드 색 */
+:root {
+  --canvas: #EEEFF2;
+  --card: #FFFFFF;
+  --cell: #E3E4E8;
+  --text: #1D1D1F;
+  --text-sub: #6B6E76;
+  --border: #E3E4E8;
+  --border-strong: #C4C7CE;
+  --hover: #E2E3E8;
+  --press: #D6D8DE;
+  --accent: #0A84FF;
+  --overlay: rgba(255, 255, 255, 0.85);
+
+  /* 타일 색 (바탕 / 글자) — Review 반영: 4·64 등 대비 조정, 2→4→8… 순서로 고르게 진해짐 */
+  --t2: #F4F7FB;    --t2-fg: #1D1D1F;
+  --t4: #C4DAF7;    --t4-fg: #1D1D1F;
+  --t8: #A3C8F5;    --t8-fg: #1D1D1F;
+  --t16: #78AFF3;   --t16-fg: #1D1D1F;
+  --t32: #4E97F0;   --t32-fg: #1D1D1F;
+  --t64: #0070E0;   --t64-fg: #FFFFFF;
+  --t128: #005EC2;  --t128-fg: #FFFFFF;
+  --t256: #004DA3;  --t256-fg: #FFFFFF;
+  --t512: #003D85;  --t512-fg: #FFFFFF;
+  --t1024: #5E5CE6; --t1024-fg: #FFFFFF;
+  --t2048: #FF9F0A; --t2048-fg: #1D1D1F;
+  --tbig: #1D1D1F;  --tbig-fg: #FFFFFF;
+
+  /* 판 크기: 화면 폭-32px, 480px, 화면 높이 70% 중 가장 작은 값 */
+  --board: min(calc(100vw - 32px), 480px, 70vh);
+
+  color-scheme: light;
+}
+
+/* 다크 모드 색 (컴퓨터 설정을 따름) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #1A1B1E;
+    --card: #232428;
+    --cell: #34363B;
+    --text: #ECECEE;
+    --text-sub: #A3A5AB;
+    --border: #34363B;
+    --border-strong: #4A4D54;
+    --hover: #34363B;
+    --press: #40434A;
+    --overlay: rgba(0, 0, 0, 0.7);
+
+    --t2: #3D4047;    --t2-fg: #ECECEE;
+    --t4: #36496A;    --t4-fg: #ECECEE;
+    --t8: #2B5890;    --t8-fg: #FFFFFF;
+    --t16: #1F63B0;   --t16-fg: #FFFFFF;
+    --t32: #176FCC;   --t32-fg: #FFFFFF;
+    --t64: #0A84FF;   --t64-fg: #1A1B1E;
+    --t128: #3D9BFF;  --t128-fg: #1A1B1E;
+    --t256: #6BB3FF;  --t256-fg: #1A1B1E;
+    --t512: #9ACBFF;  --t512-fg: #1A1B1E;
+    --t1024: #8E8CF0; --t1024-fg: #1A1B1E;
+    --t2048: #FFB340; --t2048-fg: #1A1B1E;
+    --tbig: #ECECEE;  --tbig-fg: #1A1B1E;
+
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--text);
+  font-family: "맑은 고딕", "Malgun Gothic", -apple-system, "Apple SD Gothic Neo", sans-serif;
+  /* 두 번 톡 확대 방지 (손가락 벌려 확대는 허용) */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 전체 틀: 최대 480px, 가운데, 좌우 여백 16px */
+.wrap {
+  width: 100%;
+  max-width: calc(480px + 32px);
+  margin: 0 auto;
+  padding: 20px 16px 24px;
+}
+
+/* 제목 + 점수 상자 (좁으면 두 줄로 내려감) */
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.scores {
+  display: flex;
+  gap: 8px;
+}
+
+.score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 76px;
+  padding: 6px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.score-label {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.score-value {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 설명 한 줄 + 새 게임 버튼 */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin: 16px 0;
+}
+
+.intro {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-sub);
+}
+
+/* 버튼 */
+.btn {
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.btn:hover { background: var(--hover); }
+.btn:active { background: var(--press); }
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 게임판 상자 */
+.board-wrap {
+  position: relative;
+  width: var(--board);
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2.5%;
+  padding: 2.5%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  /* 판 위에서 밀 때 화면 스크롤 막기 */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.board:focus { outline: none; }
+.board:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 빈 칸 */
+.cell {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: var(--cell);
+  border-radius: 6px;
+}
+
+/* 타일: 칸 위에 겹쳐 그림 */
+.tile {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  font-size: calc(var(--board) * 0.1);
+  overflow: hidden;
+}
+/* 자릿수가 많을수록 글자를 작게 (칸 밖으로 넘치지 않게) */
+.tile.d3 { font-size: calc(var(--board) * 0.08); }
+.tile.d4 { font-size: calc(var(--board) * 0.062); }
+.tile.d5 { font-size: calc(var(--board) * 0.05); }
+
+.tile.v2    { background: var(--t2);    color: var(--t2-fg); }
+.tile.v4    { background: var(--t4);    color: var(--t4-fg); }
+.tile.v8    { background: var(--t8);    color: var(--t8-fg); }
+.tile.v16   { background: var(--t16);   color: var(--t16-fg); }
+.tile.v32   { background: var(--t32);   color: var(--t32-fg); }
+.tile.v64   { background: var(--t64);   color: var(--t64-fg); }
+.tile.v128  { background: var(--t128);  color: var(--t128-fg); }
+.tile.v256  { background: var(--t256);  color: var(--t256-fg); }
+.tile.v512  { background: var(--t512);  color: var(--t512-fg); }
+.tile.v1024 { background: var(--t1024); color: var(--t1024-fg); }
+.tile.v2048 { background: var(--t2048); color: var(--t2048-fg); }
+.tile.vbig  { background: var(--tbig);  color: var(--tbig-fg); }
+
+/* 2 타일은 빈 칸과 색이 비슷해(특히 다크) 얇은 테두리로 구분 */
+.tile.v2 { box-shadow: inset 0 0 0 1px var(--border-strong); }
+
+/* "톡" 효과: 새 타일은 작게 나타났다 커지고, 합쳐진 타일은 살짝 커졌다 돌아옴 */
+.tile.is-new { animation: pop-in 0.14s ease-out; }
+.tile.is-merged { animation: pop-merge 0.14s ease-out; }
+
+@keyframes pop-in {
+  from { transform: scale(0.3); opacity: 0.4; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+@keyframes pop-merge {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+/* 움직임 줄이기 설정이면 효과 끔 */
+@media (prefers-reduced-motion: reduce) {
+  .tile.is-new, .tile.is-merged { animation: none; }
+}
+
+/* 안내 막 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--overlay);
+  border-radius: 10px;
+  text-align: center;
+}
+.overlay[hidden] { display: none; }
+
+.overlay-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+}
+.overlay-text {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--text-sub);
+}
+.overlay-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.overlay-buttons .btn[hidden] { display: none; }
+
+/* 도움말 */
+.help {
+  margin: 16px 0 0;
+  font-size: 13px;
+  color: var(--text-sub);
+  text-align: center;
+}
+
+/* 아주 작은 화면 (320px 등) */
+@media (max-width: 360px) {
+  .title { font-size: 36px; }
+  .score-box { min-width: 64px; padding: 5px 10px; }
+  .score-value { font-size: 18px; }
+  .overlay-title { font-size: 24px; }
+}

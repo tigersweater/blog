@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>2048</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="wrap">
+    <!-- 제목과 점수 상자 -->
+    <header class="top">
+      <h1 class="title">2048</h1>
+      <div class="scores">
+        <div class="score-box">
+          <span class="score-label">점수</span>
+          <span class="score-value" id="score" aria-live="polite">0</span>
+        </div>
+        <div class="score-box">
+          <span class="score-label">최고</span>
+          <span class="score-value" id="best" aria-live="polite">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 설명 한 줄과 새 게임 버튼 -->
+    <div class="bar">
+      <p class="intro">같은 숫자를 합쳐 2048을!</p>
+      <button type="button" class="btn" id="new-game">새 게임</button>
+    </div>
+
+    <!-- 게임판: 칸과 타일은 game.js가 채움 -->
+    <div class="board-wrap">
+      <div class="board" id="board" tabindex="0" role="group" aria-label="2048 게임판"></div>
+
+      <!-- 안내 막 (게임 끝 / 2048 달성) -->
+      <div class="overlay" id="overlay" hidden>
+        <p class="overlay-title" id="overlay-title"></p>
+        <p class="overlay-text" id="overlay-text"></p>
+        <div class="overlay-buttons">
+          <button type="button" class="btn" id="keep-playing">계속하기</button>
+          <button type="button" class="btn" id="retry">다시 하기</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="help" id="help">조작: 방향키 · WASD · 화면 밀기</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="2048 게임 미리보기">
+  <title>2048 게임 미리보기</title>
+  <!-- 바탕 -->
+  <rect width="800" height="500" fill="#EEEFF2"/>
+
+  <!-- 왼쪽: 제목과 설명 -->
+  <g font-family="'맑은 고딕', 'Malgun Gothic', -apple-system, 'Apple SD Gothic Neo', sans-serif">
+    <text x="48" y="230" font-size="96" font-weight="700" fill="#1D1D1F">2048</text>
+    <text x="50" y="276" font-size="20" fill="#6B6E76">같은 숫자를 합쳐 2048을!</text>
+    <rect x="50" y="306" width="104" height="38" rx="6" fill="#FFFFFF" stroke="#C4C7CE"/>
+    <text x="102" y="331" font-size="16" fill="#1D1D1F" text-anchor="middle">새 게임</text>
+  </g>
+
+  <!-- 오른쪽: 게임판 카드 -->
+  <rect x="360.5" y="40.5" width="419" height="419" rx="10" fill="#FFFFFF" stroke="#E3E4E8"/>
+
+  <!-- 빈 칸 16개 (89px, 간격 12px) -->
+  <g fill="#E3E4E8">
+    <rect x="374" y="54" width="89" height="89" rx="6"/>
+    <rect x="475" y="54" width="89" height="89" rx="6"/>
+    <rect x="576" y="54" width="89" height="89" rx="6"/>
+    <rect x="677" y="54" width="89" height="89" rx="6"/>
+    <rect x="374" y="155" width="89" height="89" rx="6"/>
+    <rect x="475" y="155" width="89" height="89" rx="6"/>
+    <rect x="576" y="155" width="89" height="89" rx="6"/>
+    <rect x="677" y="155" width="89" height="89" rx="6"/>
+    <rect x="374" y="256" width="89" height="89" rx="6"/>
+    <rect x="475" y="256" width="89" height="89" rx="6"/>
+    <rect x="576" y="256" width="89" height="89" rx="6"/>
+    <rect x="677" y="256" width="89" height="89" rx="6"/>
+    <rect x="374" y="357" width="89" height="89" rx="6"/>
+    <rect x="475" y="357" width="89" height="89" rx="6"/>
+    <rect x="576" y="357" width="89" height="89" rx="6"/>
+    <rect x="677" y="357" width="89" height="89" rx="6"/>
+  </g>
+
+  <!-- 타일 몇 개 -->
+  <g font-family="'맑은 고딕', 'Malgun Gothic', -apple-system, 'Apple SD Gothic Neo', sans-serif" font-weight="700" text-anchor="middle">
+    <rect x="374" y="54" width="89" height="89" rx="6" fill="#F4F7FB" stroke="#C4C7CE"/>
+    <text x="418.5" y="113" font-size="40" fill="#1D1D1F">2</text>
+
+    <rect x="677" y="54" width="89" height="89" rx="6" fill="#C4DAF7"/>
+    <text x="721.5" y="113" font-size="40" fill="#1D1D1F">4</text>
+
+    <rect x="475" y="155" width="89" height="89" rx="6" fill="#A3C8F5"/>
+    <text x="519.5" y="214" font-size="40" fill="#1D1D1F">8</text>
+
+    <rect x="576" y="256" width="89" height="89" rx="6" fill="#78AFF3"/>
+    <text x="620.5" y="315" font-size="40" fill="#1D1D1F">16</text>
+
+    <rect x="374" y="357" width="89" height="89" rx="6" fill="#0070E0"/>
+    <text x="418.5" y="416" font-size="40" fill="#FFFFFF">64</text>
+
+    <rect x="677" y="357" width="89" height="89" rx="6" fill="#FF9F0A"/>
+    <text x="721.5" y="411" font-size="28" fill="#1D1D1F">2048</text>
+  </g>
+</svg>

@@ -233,6 +233,46 @@ a { color: var(--link); }
 }
 .post-card .tags { margin-top: 12px; }
 
+/* ───── 웹앱 카드 (첫 화면 "만든 것") ───── */
+.section-title {
+  margin: 0 4px 12px;
+  color: var(--sub);
+  font-size: 14px;
+  font-weight: 700;
+}
+.apps { margin-bottom: 28px; }
+.app-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.app-card {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.app-card:hover { border-color: var(--border-strong); }
+.app-preview {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--border);
+}
+.app-body { padding: 14px 16px 16px; }
+.app-body h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.4; }
+.app-body p { margin: 0; color: var(--sub); font-size: 14px; }
+
 .meta { color: var(--sub); font-size: 13px; }
 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }

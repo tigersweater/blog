@@ -1,0 +1,6 @@
+{
+  "title": "2048",
+  "description": "방향키나 손가락으로 숫자 타일을 밀어 같은 숫자끼리 합치는 퍼즐 게임",
+  "preview": "preview.svg",
+  "order": 1
+}

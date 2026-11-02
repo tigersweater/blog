@@ -11,6 +11,7 @@ const POSTS_DIR = path.join(ROOT, '글');
 const SRC_DIR = path.join(ROOT, 'src');
 const OUT_DIR = path.join(ROOT, '사이트');
 const CONFIG_FILE = path.join(ROOT, '블로그설정.json');
+const APPS_DIR = path.join(ROOT, 'apps');
 
 const IMAGE_EXT = /\.(png|jpe?g|gif|svg|webp|bmp|avif)$/i;
 
@@ -605,7 +606,74 @@ function fill(template, values) {
   return template.replace(/\{\{(\w+)\}\}/g, (m, key) => (key in values ? values[key] : m));
 }
 
-function renderIndex(posts) {
+// 웹앱 목록 읽기: apps\{앱이름}\app.json 이 있는 폴더만 (제목·설명·미리보기 그림)
+function loadApps() {
+  if (!fs.existsSync(APPS_DIR)) return [];
+  const apps = [];
+  for (const entry of fs.readdirSync(APPS_DIR, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith('.')) continue;
+    const infoFile = path.join(APPS_DIR, entry.name, 'app.json');
+    if (!fs.existsSync(infoFile)) {
+      warn(`apps\\${entry.name}: app.json이 없어 첫 화면 카드에서 뺐습니다.`);
+      continue;
+    }
+    try {
+      const info = JSON.parse(fs.readFileSync(infoFile, 'utf8'));
+      apps.push({
+        dir: entry.name,
+        title: String(info.title || entry.name),
+        description: String(info.description || ''),
+        preview: info.preview ? String(info.preview) : '',
+        order: Number(info.order) || 0,
+      });
+    } catch (e) {
+      warn(`apps\\${entry.name}\\app.json: 읽지 못했습니다 (${e.message})`);
+    }
+  }
+  return apps.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, 'ko'));
+}
+
+// 웹앱 폴더를 사이트\apps\로 복사. 작업 문서(.md, 지침 폴더, app.json)는 빼고 게임 파일만
+function copyApp(srcDir, destDir) {
+  fs.mkdirSync(destDir, { recursive: true });
+  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+    const name = entry.name;
+    if (name.startsWith('.') || name === '지침' || name === 'app.json' || name.toLowerCase().endsWith('.md')) continue;
+    const from = path.join(srcDir, name);
+    const to = path.join(destDir, name);
+    if (entry.isDirectory()) copyApp(from, to);
+    else fs.copyFileSync(from, to);
+  }
+}
+
+function renderApps(apps) {
+  if (!apps.length) return '';
+  const cards = apps.map((a) => {
+    const base = `apps/${encodeURIComponent(a.dir)}/`;
+    const img = a.preview
+      ? `<img class="app-preview" src="${base}${a.preview.split('/').map(encodeURIComponent).join('/')}" alt="" loading="lazy">`
+      : '';
+    return `
+<li>
+  <a class="app-card" href="${base}index.html">
+    ${img}
+    <div class="app-body">
+      <h3>${escapeHtml(a.title)}</h3>
+      ${a.description ? `<p>${escapeHtml(a.description)}</p>` : ''}
+    </div>
+  </a>
+</li>`;
+  }).join('');
+  return `
+<section class="apps" aria-labelledby="apps-title">
+  <h2 id="apps-title" class="section-title">만든 것</h2>
+  <ul class="app-list">${cards}
+  </ul>
+</section>
+<h2 class="section-title">글</h2>`;
+}
+
+function renderIndex(posts, apps = []) {
   const counts = new Map();
   posts.forEach((p) => p.tags.forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)));
   const tags = [...counts.keys()].sort((a, b) => counts.get(b) - counts.get(a) || a.localeCompare(b, 'ko'));
@@ -629,6 +697,7 @@ function renderIndex(posts) {
   <h1>${escapeHtml(config.name)}</h1>
   ${config.description ? `<p>${escapeHtml(config.description)}</p>` : ''}
 </section>
+${renderApps(apps)}
 ${tags.length ? `<div class="chips" role="group" aria-label="태그로 거르기">\n${chips}\n</div>` : ''}
 ${posts.length ? `<ul class="post-list">${items}\n</ul>` : ''}
 <p class="empty"${posts.length ? ' hidden' : ''}>${posts.length ? '이 태그의 글이 없습니다.' : '아직 글이 없습니다. 글 폴더에 .md 파일을 넣고 빌드해 주세요.'}</p>`;
@@ -779,6 +848,9 @@ function main() {
   fs.mkdirSync(path.join(OUT_DIR, 'assets'), { recursive: true });
   fs.copyFileSync(path.join(SRC_DIR, 'style.css'), path.join(OUT_DIR, 'assets', 'style.css'));
   fs.copyFileSync(path.join(SRC_DIR, 'main.js'), path.join(OUT_DIR, 'assets', 'main.js'));
+  // 웹앱 복사 (apps\ → 사이트\apps\)
+  const apps = loadApps();
+  apps.forEach((a) => copyApp(path.join(APPS_DIR, a.dir), path.join(OUT_DIR, 'apps', a.dir)));
 
   const year = new Date().getFullYear();
   const page = (pageTitle, description, content) => fill(template, {
@@ -789,14 +861,14 @@ function main() {
     content,
   });
 
-  fs.writeFileSync(path.join(OUT_DIR, 'index.html'), page(config.name, config.description, renderIndex(published)));
+  fs.writeFileSync(path.join(OUT_DIR, 'index.html'), page(config.name, config.description, renderIndex(published, apps)));
   published.forEach((p, n) => {
     const html = page(`${p.title} · ${config.name}`, p.summary, renderPostPage(p, published[n - 1], published[n + 1]));
     fs.writeFileSync(path.join(OUT_DIR, p.slug + '.html'), html);
   });
 
   console.log('');
-  console.log(`[완료] 글 ${published.length}개를 블로그로 만들었습니다.`);
+  console.log(`[완료] 글 ${published.length}개${apps.length ? `, 웹앱 ${apps.length}개` : ''}를 블로그로 만들었습니다.`);
   console.log(`       결과: 사이트\\index.html`);
   if (warnings.length) {
     console.log('');
