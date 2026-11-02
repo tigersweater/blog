@@ -1,0 +1,15 @@
+# 빌드 결과물: 빌드.bat으로 언제든 다시 만들 수 있으므로 저장하지 않음
+사이트/
+
+# 개인 정보·PC 경로가 담긴 Claude 메모 (공개 저장소에 올리지 않음)
+CLAUDE.local.md
+
+# 옵시디언이 자동으로 바꾸는 화면 상태 파일 (설정 자체는 저장)
+글/.obsidian/workspace*.json
+글/.obsidian/cache
+글/.trash/
+
+# 운영체제가 만드는 파일
+Thumbs.db
+desktop.ini
+.DS_Store
