@@ -5,11 +5,11 @@
   --canvas: #EEEFF2;
   --card: #FFFFFF;
   --text: #1D1D1F;
-  --text-sub: #6B6E76;
+  --sub: #6B6E76;
   --border: #E3E4E8;
   --border-strong: #C4C7CE;
   --hover: #E2E3E8;
-  --press: #D6D8DE;
+  --pressed: #D6D8DE;
   --accent: #0A84FF;
 
   /* 빈 칸 체크무늬, 격자선 */
@@ -29,11 +29,11 @@
     --canvas: #1A1B1E;
     --card: #232428;
     --text: #ECECEE;
-    --text-sub: #A3A5AB;
+    --sub: #A3A5AB;
     --border: #34363B;
     --border-strong: #4A4D54;
     --hover: #34363B;
-    --press: #40434A;
+    --pressed: #40434A;
 
     --chk-a: #2A2B30;
     --chk-b: #33353A;
@@ -80,8 +80,20 @@ body {
   margin: 6px 0 0;
   font-size: 15px;
   line-height: 22px;
-  color: var(--text-sub);
+  color: var(--sub);
 }
+
+/* 사용법 안내: 작은 보조 글자, 좁은 화면에서는 줄바꿈 */
+.howto {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 20px; /* 정수 px 유지 */
+  color: var(--sub);
+  overflow-wrap: anywhere;
+}
+.howto li + li { margin-top: 2px; }
 
 /* 배치: 넓으면 그림판 왼쪽 + 도구 오른쪽, 좁으면 위→아래 */
 .layout {
@@ -148,7 +160,7 @@ body {
   margin: 14px 0 8px;
   font-size: 13px;
   font-weight: 400;
-  color: var(--text-sub);
+  color: var(--sub);
 }
 .label:first-child { margin-top: 0; }
 
@@ -175,7 +187,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 .btn:hover { background: var(--hover); }
-.btn:active { background: var(--press); }
+.btn:active { background: var(--pressed); }
 .btn:focus-visible,
 .link-btn:focus-visible,
 .check input:focus-visible,
@@ -214,7 +226,7 @@ body {
   gap: 2px;
   padding: 6px 2px;
   font-size: 12px;
-  color: var(--text-sub);
+  color: var(--sub);
 }
 .tool span { white-space: nowrap; }
 /* 고른 도구: 강조색 2px 테두리 + 굵게 */
@@ -244,7 +256,7 @@ body {
 }
 .current-label {
   font-size: 13px;
-  color: var(--text-sub);
+  color: var(--sub);
   white-space: nowrap;
 }
 .swatch {
@@ -379,7 +391,7 @@ body {
   min-height: 36px;
   font: inherit;
   font-size: 13px;
-  color: var(--text-sub);
+  color: var(--sub);
   background: none;
   border: 0;
   text-decoration: underline;
@@ -392,11 +404,11 @@ body {
   min-height: 18px;
   font-size: 13px;
   text-align: center;
-  color: var(--text-sub);
+  color: var(--sub);
 }
 
 .help {
   margin: 16px 0 0;
   font-size: 13px;
-  color: var(--text-sub);
+  color: var(--sub);
 }
