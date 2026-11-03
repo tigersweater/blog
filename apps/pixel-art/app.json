@@ -1,0 +1,6 @@
+{
+  "title": "픽셀 아트",
+  "description": "16×16 격자에 도트를 찍어 그림을 그리고 PNG로 저장하는 그림판",
+  "preview": "preview.svg",
+  "order": 2
+}

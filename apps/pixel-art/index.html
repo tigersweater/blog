@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>픽셀 아트</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="wrap">
+    <!-- 제목과 설명 -->
+    <header class="top">
+      <h1 class="title">픽셀 아트</h1>
+      <p class="intro">16×16 칸에 도트를 찍어 그려 보세요</p>
+    </header>
+
+    <div class="layout">
+      <!-- 그림판 카드: 칸 256개는 app.js가 채움 -->
+      <section class="card board-card" id="board-card" aria-label="그림판">
+        <div class="board" id="board" role="img" aria-label="16×16 그림판"></div>
+      </section>
+
+      <!-- 도구 상자 카드 -->
+      <section class="card tools-card" aria-label="도구">
+        <h2 class="label">도구</h2>
+        <div class="tool-row" role="group" aria-label="도구 고르기">
+          <button type="button" class="btn tool" data-tool="pen" aria-pressed="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>
+            <span>펜</span>
+          </button>
+          <button type="button" class="btn tool" data-tool="eraser" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 20h11"/><path d="M4 15l9-9 6 6-8 8H8z"/><path d="M9 10l6 6"/></svg>
+            <span>지우개</span>
+          </button>
+          <button type="button" class="btn tool" data-tool="fill" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11l7-7 7 7-7 7z"/><path d="M5 11h14"/><path d="M20 15c0 2-1 3-1 4a1 1 0 0 0 2 0c0-1-1-2-1-4z"/></svg>
+            <span>채우기</span>
+          </button>
+          <button type="button" class="btn tool" data-tool="picker" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6l6 6"/><path d="M14 8l-9 9-1 3 3-1 9-9"/><path d="M15 5l2-2a2.1 2.1 0 0 1 3 3l-2 2"/></svg>
+            <span>스포이드</span>
+          </button>
+        </div>
+
+        <div class="row">
+          <button type="button" class="btn icon-btn" id="undo" aria-label="되돌리기" title="되돌리기" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+          </button>
+          <button type="button" class="btn icon-btn" id="redo" aria-label="다시하기" title="다시하기" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>
+          </button>
+          <div class="current">
+            <span class="current-label">지금 색</span>
+            <span class="swatch" id="swatch" aria-hidden="true"></span>
+            <code class="code" id="color-code">#000000</code>
+          </div>
+        </div>
+
+        <h2 class="label">팔레트</h2>
+        <div class="palette" id="palette" role="group" aria-label="팔레트"></div>
+        <label class="btn custom">
+          <input type="color" id="custom-color" value="#000000">
+          <span>＋ 직접 고르기</span>
+        </label>
+
+        <div class="row row-split">
+          <label class="check">
+            <input type="checkbox" id="grid-toggle" checked>
+            <span>격자선</span>
+          </label>
+          <button type="button" class="btn" id="clear">전체 지우기</button>
+        </div>
+
+        <div class="save-box">
+          <label class="scale">
+            <span>저장 크기</span>
+            <select id="scale">
+              <option value="1">1배 (16px)</option>
+              <option value="8">8배 (128px)</option>
+              <option value="16" selected>16배 (256px)</option>
+              <option value="32">32배 (512px)</option>
+            </select>
+          </label>
+          <button type="button" class="btn primary" id="save">PNG로 저장</button>
+          <button type="button" class="link-btn" id="open-tab" hidden>저장이 안 되면: 새 탭에서 그림 열기</button>
+          <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+    </div>
+
+    <p class="help" id="help">자동 저장됨 · 창을 닫아도 그림이 남아요</p>
+  </main>
+</body>
+</html>
